@@ -8,3 +8,6 @@ before_install:
 after_success:
 - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && mvn deploy
 - '[[ $TRAVIS_TAG == v[0-9.]* ]] && { mvn clean deploy -Prelease };'
+notifications:
+  email:
+  - arena-uqbar@googlegroups.com
