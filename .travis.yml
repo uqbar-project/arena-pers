@@ -5,3 +5,6 @@ before_install:
 - tar xvf maven_files.tar
 - mv settings.xml ~/.m2/settings.xml  
 - gpg --import travis.gpg
+after_success:
+- test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && mvn deploy
+- '[[ $TRAVIS_TAG == v[0-9.]* ]] && { mvn clean deploy -Prelease };'
