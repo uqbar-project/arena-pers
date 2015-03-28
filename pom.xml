@@ -21,9 +21,9 @@
 	</properties>
 
 	<scm>
-		<connection>scm:git:${scm.gitServer}/arena</connection>
-		<developerConnection>scm:git:${scm.gitServer}/arena</developerConnection>
-		<url>scm:git:${scm.gitServer}/arena</url>
+		<connection>scm:git:${scm.gitServer}/arena-pers</connection>
+		<developerConnection>scm:git:${scm.gitServer}/arena-pers</developerConnection>
+		<url>scm:git:${scm.gitServer}/arena-pers</url>
 		<tag>HEAD</tag>
 	</scm>
 
