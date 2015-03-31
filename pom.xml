@@ -49,7 +49,7 @@
 			<version>3.5.1</version>
 		</dependency>
 		<dependency>
-			<groupId>uqbar</groupId>
+			<groupId>org.uqbar-project</groupId>
 			<artifactId>uqbar-class-descriptor</artifactId>
 			<version>1.3.2</version>
 		</dependency>
