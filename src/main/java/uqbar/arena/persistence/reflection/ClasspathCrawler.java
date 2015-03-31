@@ -18,13 +18,13 @@ import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 
-public class OldClasspathCrawler {
+public class ClasspathCrawler {
 	private ClassLoader classLoader = null;
 	private List<String> classPaths = new ArrayList<String>();
 	private String packageName;
 	private Logger log = Logger.getLogger(this.getClass());
 	
-	public OldClasspathCrawler(ClassLoader classLoader) {
+	public ClasspathCrawler(ClassLoader classLoader) {
 		super();
 		this.classLoader = classLoader;
 		this.classPaths.addAll(Arrays.asList(System.getProperty("java.class.path").split(File.pathSeparatorChar + "")));
@@ -123,7 +123,7 @@ public class OldClasspathCrawler {
 			
 			if(name.startsWith(packageName))
 				result.add(Class.forName(name));
-		}catch(OldCouldNotDeduceClassnameException e){
+		}catch(CouldNotDeduceClassnameException e){
 			log.error(e.getMessage());
 		}
 	}
@@ -136,7 +136,7 @@ public class OldClasspathCrawler {
 			}
 		}
 			
-		throw new OldCouldNotDeduceClassnameException("Could not deduce className for:" + path);
+		throw new CouldNotDeduceClassnameException("Could not deduce className for:" + path);
 	}
 
 	protected Set<Class<?>> crawlJar(File f) throws Exception {

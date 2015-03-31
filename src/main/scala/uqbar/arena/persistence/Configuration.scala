@@ -1,16 +1,15 @@
 package uqbar.arena.persistence
 
-import com.uqbar.commons.descriptor.ClassDescriptor
-import uqbar.arena.persistence.reflection.ClasspathCrawler
-import uqbar.arena.persistence.configuration.EntityVisitor
-import scala.collection.JavaConversions._
+import scala.collection.JavaConversions.asScalaSet
 import scala.collection.mutable.HashMap
-import uqbar.arena.persistence.mapping.EntityMapping
-import scala.util.control.Exception
-import uqbar.arena.persistence.mapping.EntityMapping
-import uqbar.arena.persistence.mapping.EntityMapping
+
 import org.uqbar.commons.model.Entity
+
+import com.uqbar.commons.descriptor.ClassDescriptor
+
+import uqbar.arena.persistence.configuration.EntityVisitor
 import uqbar.arena.persistence.mapping.EntityMapping
+import uqbar.arena.persistence.reflection.ClasspathCrawler
 
 object Configuration {
 

@@ -1,10 +1,10 @@
 package uqbar.arena.persistence.reflection;
 
-public class OldCouldNotDeduceClassnameException extends RuntimeException {
+public class CouldNotDeduceClassnameException extends RuntimeException {
 
 	private static final long serialVersionUID = -5884751696908253723L;
 
-	public OldCouldNotDeduceClassnameException(String message) {
+	public CouldNotDeduceClassnameException(String message) {
 		super(message);
 	}
 
