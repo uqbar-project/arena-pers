@@ -4,7 +4,7 @@ import uqbar.arena.persistence.annotations.PersistentField;
 
 public class CelularCheto extends Celular {
 	private static final long serialVersionUID = 1L;
-	private Double bonus;
+	@PersistentField private Double bonus;
 
 	public CelularCheto() {
 	}
@@ -15,7 +15,6 @@ public class CelularCheto extends Celular {
 		this.bonus = bonus;
 	}
 
-	@PersistentField
 	public Double getBonus() {
 		return bonus;
 	}
@@ -49,5 +48,13 @@ public class CelularCheto extends Celular {
 		return true;
 	}
 
-
+	@Override
+	public String toString() {
+		StringBuffer result = new StringBuffer();
+		result.append(super.toString());
+		result.append(" - ");
+		result.append(" Bonus: ");
+		result.append(bonus);
+		return result.toString();
+	}
 }

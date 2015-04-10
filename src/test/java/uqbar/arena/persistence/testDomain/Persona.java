@@ -14,12 +14,12 @@ import uqbar.arena.persistence.annotations.Relation;
 public class Persona extends Entity {
 	private static final long serialVersionUID = 1L;
 
-	private List<Celular> celulares;
-	private String nombre;
-	private String apellido;
-	private Date fechaNacimiento;
-	private int legajo;
-	private Celular preferido;
+	@Relation private List<Celular> celulares;
+	@PersistentField private String nombre;
+	@PersistentField private String apellido;
+	@PersistentField private Date fechaNacimiento;
+	@PersistentField private int legajo;
+	@Relation private Celular preferido;
 	
 	public Persona() {
 		celulares = new ArrayList<Celular>();
@@ -34,7 +34,6 @@ public class Persona extends Entity {
 		this.legajo = legajo;
 	}
 
-	@Relation
 	public List<Celular> getCelulares() {
 		return celulares;
 	}
@@ -43,7 +42,6 @@ public class Persona extends Entity {
 		this.celulares = celulares;
 	}
 
-	@PersistentField
 	public String getNombre() {
 		return nombre;
 	}
@@ -52,7 +50,6 @@ public class Persona extends Entity {
 		this.nombre = nombre;
 	}
 
-	@PersistentField
 	public String getApellido() {
 		return apellido;
 	}
@@ -61,7 +58,6 @@ public class Persona extends Entity {
 		this.apellido = apellido;
 	}
 
-	@PersistentField
 	public Date getFechaNacimiento() {
 		return fechaNacimiento;
 	}
@@ -70,7 +66,6 @@ public class Persona extends Entity {
 		this.fechaNacimiento = fechaNacimiento;
 	}
 
-	@PersistentField
 	public int getLegajo() {
 		return legajo;
 	}
@@ -79,7 +74,6 @@ public class Persona extends Entity {
 		this.legajo = legajo;
 	}
 
-	@Relation
 	public Celular getPreferido() {
 		return preferido;
 	}
