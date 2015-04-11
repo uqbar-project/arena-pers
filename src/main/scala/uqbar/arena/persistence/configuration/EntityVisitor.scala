@@ -12,11 +12,12 @@ import uqbar.arena.persistence.mapping.EntityMapping
 import uqbar.arena.persistence.mapping.FieldMapping
 import uqbar.arena.persistence.mapping.RelationMapping
 import org.apache.log4j.Logger
+import java.lang.reflect.Field
 
 class EntityVisitor[T <: Entity](entityClazz: Class[T]) {
   var entity: EntityMapping[_] = null
   val log = Logger.getLogger(this.getClass())
-  
+
   if (isEntity(entityClazz)) {
     entity = new EntityMapping(entityClazz)
     log.info(s"Loaded persistent class: ${entityClazz.getCanonicalName()}")
@@ -32,29 +33,19 @@ class EntityVisitor[T <: Entity](entityClazz: Class[T]) {
       isEntity(clazz.getSuperclass())
   }
 
-  def methodAnnotation(clazz: Class[_], method: Method, annotation: PersistentField) {
-    checkPersistentClass(method, clazz)
-    val name = extractName(method, annotation.annotationType().getName())
-    val fieldType = method.getGenericReturnType();
-    this.entity.mappings += FieldMapping.create(name, fieldType)
+  def fieldAnnotation(clazz: Class[_], field: Field, annotation: PersistentField) {
+    checkPersistentClass(field, clazz)
+    this.entity.mappings += FieldMapping.create(field.getName, field.getType)
   }
 
-  def methodAnnotation(clazz: Class[_], method: Method, annotation: Relation) {
-    checkPersistentClass(method, clazz)
-    val name = extractName(method, annotation.annotationType().getName())
-    val fieldType = method.getGenericReturnType();
-    this.entity.mappings += RelationMapping.create(name, fieldType)
+  def fieldAnnotation(clazz: Class[_], field: Field, annotation: Relation) {
+    checkPersistentClass(field, clazz)
+    this.entity.mappings += RelationMapping.create(field.getName, field.getGenericType)
   }
 
-  def checkPersistentClass(method: Method, clazz: Class[_]) {
+  def checkPersistentClass(field: Field, clazz: Class[_]) {
     if (this.entity == null)
-      throw new ConfigurationException("El metodo anotado se encuentra en una clase no anotada:" + method.getName() + " en:" + clazz.getCanonicalName())
+      throw new ConfigurationException("El atributo anotado se encuentra en una clase no anotada:" + field.getName() + " en:" + clazz.getCanonicalName())
   }
 
-  def extractName(method: Method, annotationName: String): String = {
-    if (!method.getName().startsWith("get")) {
-      throw new ConfigurationException("La annotation " + annotationName + " solo es válida anotando un getter");
-    }
-    return StringUtils.uncapitalize(method.getName().substring(3));
-  }
 }

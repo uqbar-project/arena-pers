@@ -1,6 +1,7 @@
 package uqbar.arena.persistence.mapping
 
 import java.lang.reflect.Type
+import org.apache.log4j.Logger
 import org.neo4j.graphdb.Node
 import uqbar.arena.persistence.ConfigurationException
 import uqbar.arena.persistence.reflection.TypeWrapper
@@ -11,6 +12,7 @@ import uqbar.arena.persistence.Session
 import java.math.BigDecimal
 
 object FieldMapping {
+  
   def create(name: String, fieldType: Type): FieldMapping = {
     val wrappedType = new TypeWrapper(fieldType)
 
@@ -31,11 +33,11 @@ object FieldMapping {
 }
 
 class FieldMapping(name: String, wrappedType: TypeWrapper) extends Mapping {
-  checkNativeOrEnum();
+  checkNativeOrEnum()
 
   def checkNativeOrEnum() {
     if (!wrappedType.isNative && !wrappedType.isEnum && !wrappedType.isBuiltinType) {
-      throw new ConfigurationException("La annotation PersistentField es solo aplicable a tipos nativos, Enum, String, java.util.Date o java.math.BigDecimal:" + wrappedType.name);
+      throw new ConfigurationException("La annotation PersistentField es solo aplicable a tipos nativos, Enum, String, java.util.Date o java.math.BigDecimal:" + wrappedType.name)
     }
   }
 
@@ -43,16 +45,16 @@ class FieldMapping(name: String, wrappedType: TypeWrapper) extends Mapping {
     val v = getValue(target)
 
     if (v == null) {
-      node.removeProperty(this.name);
+      node.removeProperty(this.name)
       session.graphDB.index().forNodes("Attr").remove(node, this.name)
     } else {
       session.graphDB.index().forNodes("Attr-" + target.getClass().toString()).add(node, this.name, v)
-      node.setProperty(this.name, v);
+      node.setProperty(this.name, v)
     }
   }
 
   protected def getValue(target: Object): Object = {
-    convertValueAfterGet(ReflectionUtils.invokeGetter(target, this.name));
+	  convertValueAfterGet(ReflectionUtils.invokeGetter(target, this.name))
   }
 
   protected def convertValueAfterGet(originalValue: Object): Object = {
@@ -61,19 +63,19 @@ class FieldMapping(name: String, wrappedType: TypeWrapper) extends Mapping {
     }
 
     if (wrappedType.isDate) {
-      return if (originalValue == null) null else originalValue.asInstanceOf[Date].getTime().asInstanceOf[java.lang.Long];
+      return if (originalValue == null) null else originalValue.asInstanceOf[Date].getTime().asInstanceOf[java.lang.Long]
     }
 
     if (wrappedType.isBigDecimal) {
-      return if (originalValue == null) null else originalValue.toString();
+      return if (originalValue == null) null else originalValue.toString()
     }
 
-    originalValue;
+    originalValue
   }
 
   def convertValueBeforeSet(originalValue: Object): Object = {
     if(originalValue == null)
-      return null;
+      return null
     
     if (wrappedType.isEnum) {
       return wrappedType.enumValue(originalValue)
@@ -95,11 +97,14 @@ class FieldMapping(name: String, wrappedType: TypeWrapper) extends Mapping {
   }
 
   def query(queryBuilder: QueryBuilder, target: Object) {
-    val v = this.getValue(target);
+    val v = this.getValue(target)
     if (v != null) {
       val stringValue = v.toString()
       if (!stringValue.isEmpty())
         queryBuilder.add(this.name, stringValue)
     }
   }
+  
+  def log() : Logger = Logger.getLogger(this.getClass())
+  
 }

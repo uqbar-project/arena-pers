@@ -34,10 +34,10 @@ abstract class RelationMapping(name: String, wrappedType: TypeWrapper) extends M
 
   def checkRelation() {
     if (wrappedType.isNative && wrappedType.isEnum && wrappedType.isBuiltinType) {
-      throw new ConfigurationException("La annotation Relation no es aplicable a tipos nativos, Enum, String o java.util.Date:" + wrappedType.name);
+      throw new ConfigurationException(name +  ":la annotation Relation no es aplicable a tipos nativos, Enum, String o java.util.Date:" + wrappedType.name);
     }
     if (!wrappedType.isCollectionOfPersistent && !wrappedType.isPersistent) {
-      throw new ConfigurationException("La annotation Relation es solo aplicable a PersistentClass o a colecciones de PersistentClass:" + wrappedType.name);
+      throw new ConfigurationException(name + ": la annotation Relation es solo aplicable a PersistentClass o a colecciones de PersistentClass:" + wrappedType.name);
     }
   }
 }

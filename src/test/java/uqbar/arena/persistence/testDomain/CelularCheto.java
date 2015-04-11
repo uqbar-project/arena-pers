@@ -52,9 +52,13 @@ public class CelularCheto extends Celular {
 	public String toString() {
 		StringBuffer result = new StringBuffer();
 		result.append(super.toString());
-		result.append(" - ");
-		result.append(" Bonus: ");
+		result.append(" - modelo: " + getModelo()); 
+		result.append(" - numero: " + getNumero());
+		result.append(" - duenio: " + getDuenio());
+		result.append(" - duenio: " + getPrecioPorMinuto());
+		result.append(" - bonus: ");
 		result.append(bonus);
 		return result.toString();
 	}
+	
 }

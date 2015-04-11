@@ -2,23 +2,21 @@ package uqbar.arena.persistence
 
 import scala.collection.JavaConversions.asScalaSet
 import scala.collection.mutable.HashMap
-
 import org.uqbar.commons.model.Entity
-
 import com.uqbar.commons.descriptor.ClassDescriptor
-
 import uqbar.arena.persistence.configuration.EntityVisitor
 import uqbar.arena.persistence.mapping.EntityMapping
 import uqbar.arena.persistence.reflection.ClasspathCrawler
+import com.uqbar.commons.descriptor.InheritedClassDescriptor
 
 object Configuration {
 
-  var entities = new HashMap[String, EntityMapping[_]];
+  var entities = new HashMap[String, EntityMapping[_]]
   var rootPackageName = ""
-  protected var initialized = false;
+  protected var initialized = false
 
   def clear() {
-    entities = new HashMap[String, EntityMapping[_]];
+    entities = new HashMap[String, EntityMapping[_]]
   }
   
   def setRootPackageName(value:String) = {
@@ -32,17 +30,17 @@ object Configuration {
 
   def configure() {
     try {
-      val classDescriptor = new ClassDescriptor();
+      val classDescriptor = new InheritedClassDescriptor()
 
-      val clazzes = new ClasspathCrawler(this.getClass().getClassLoader()).getClasses(rootPackageName);
+      val clazzes = new ClasspathCrawler(this.getClass().getClassLoader()).getClasses(rootPackageName)
 
       clazzes.foreach { clazz =>
-        val visitor = new EntityVisitor(clazz.asInstanceOf[Class[Entity]]);
-        classDescriptor.describe(clazz, visitor);
+        val visitor = new EntityVisitor(clazz.asInstanceOf[Class[Entity]])
+        classDescriptor.describe(clazz, visitor)
       }
 
-      SessionManager.startDB();
-      initialized = true;
+      SessionManager.startDB()
+      initialized = true
     } catch {
       case e: RuntimeException if e.getCause() != null && e.getCause().getClass() == classOf[ConfigurationException] => throw e.getCause()
       case e: Throwable => throw e
@@ -58,7 +56,7 @@ object Configuration {
   }
 
   def mappingByName(className: String): EntityMapping[_] = {
-    checkStarted();
+    checkStarted()
     this.entities.get(className).orNull
   }
 }

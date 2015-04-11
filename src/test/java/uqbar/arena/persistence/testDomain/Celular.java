@@ -10,7 +10,7 @@ import uqbar.arena.persistence.annotations.Relation;
 public class Celular extends Entity {
 	private static final long serialVersionUID = 1L;
 
-	@Relation private Modelo modelo;
+	@PersistentField private Modelo modelo;
 	@PersistentField private String numero;
 	@Relation private Persona duenio;
 	@PersistentField private Double precioPorMinuto;
