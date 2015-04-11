@@ -15,6 +15,7 @@ public abstract class AbstractArenaPersistenceTest {
 	public void setUp() throws Exception {
 		graphDb = new TestGraphDatabaseFactory().newImpermanentDatabaseBuilder().newGraphDatabase();
 		SessionManager.testMode(graphDb);
+		Configuration.rootPackageName_$eq("uqbar");
 		Configuration.configure();
 		transaction = graphDb.beginTx();
 	}
