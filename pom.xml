@@ -29,11 +29,11 @@
 	<distributionManagement>
 		<site>
 			<id>sites-uqbar-project.org</id>
-			<url>ftp://arena.uqbar-project.org/arena-pers/</url>
+			<url>ftp://arena-pers.uqbar.org/arena-pers/</url>
 		</site>
 	</distributionManagement>
 	
-	<url>http://arena.uqbar-project.org/arena-pers</url>
+	<url>http://arena-pers.uqbar.org/arena-pers</url>
 
 	<dependencies>
 		<!-- UQBAR -->
