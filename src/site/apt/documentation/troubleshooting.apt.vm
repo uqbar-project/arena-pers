@@ -1,0 +1,181 @@
+ -----
+ Uqbar Project
+ -----
+ ${project.name}
+ -----
+
+Troubleshooting
+
+ En general los mensajes de error son bastante representativos, pero te ofrecemos una guía de ayuda.
+
+* Problemas con @PersistentField o @Relation
+
+----------------------------------
+The annotation @PersistentField is disallowed for this location.
+----------------------------------
+
+ A partir de la versión 3.4.1 las anotaciones se hacen sobre los atributos (variables) y no sobre los getters.
+ Si intentás ubicar las annotations @PersistentField o @Relation en un getter vas a tener este error del compilador.
+  
+========
+----------------------------------
+Exception in thread "main" uqbar.arena.persistence.ConfigurationException: La annotation PersistentField es solo aplicable a tipos nativos, Enum, String, java.util.Date o java.math.BigDecimal:scala.math.BigDecimal
+----------------------------------
+ Si estás definiendo un atributo @PersistentField de un tipo T que no sea primitivo, String, o tipos BigDecimal|Date propios de Java tenés que modificar el tipo o bien trabajar con una @Relation.
+========
+
+* Problemas al iniciar la aplicación
+
+----------------------------------
+Exception in thread "main" uqbar.arena.persistence.ConfigurationException: Se debe inicializar la configuración de la persistencia llamando a Configure.configure() antes de realizar cualquier cosa.
+----------------------------------
+ Estás invocando a un Home que quiere hacer una búsqueda o una actualización previo a la configuración del motor de persistencia de Arena. La solución es invocar Configuration.configure() antes de utilizar las homes, al inicio
+ de la aplicación. Para más información fijate cómo se {{{./initialization.html}inicializa la aplicación}}.
+
+========
+
+* Problemas al hacer las búsquedas
+
+** No funciona la búsqueda by example
+
+----------------------------------
+Exception in thread "main" java.lang.Exception: Arena persistence no permite hacer query by example con relaciones entre objetos.
+at uqbar.arena.persistence.mapping.RelationMapping.query(RelationMapping.scala:31)
+at uqbar.arena.persistence.mapping.EntityMapping$$anonfun$searchByExample$1.apply(EntityMapping.scala:64)
+----------------------------------
+ Como señalamos en la página de {{{./homes.html}Homes}}, no es posible hacer una búsqueda by example a través de relaciones (sólo persistent fields). La solución pasa por
+  
+ [[1]] hacer una búsqueda sin filtro o bien con filtros simples, y luego completar el filtro de los objetos en memoria, o 
+
+ [[2]] en caso de ser posible, generar otro home que tenga una lógica diferente para navegar el grafo de objetos, que se adapte mejor al caso de uso.
+ 
+ []
+
+========
+
+** El método allInstances no devuelve elementos aunque sí los persiste
+ 
+ Chequeá el stack trace por errores al definir el home, algo como: 
+
+----------------------------------
+ClassNotFoundException(Throwable).<init>(String, Throwable) line: 286 
+ClassNotFoundException(Exception).<init>(String, Throwable) line: not available 
+ClassNotFoundException(ReflectiveOperationException).<init>(String, Throwable) line: not available 
+ClassNotFoundException.<init>(String) line: not available 
+URLClassLoader$1.run() line: not available 
+URLClassLoader$1.run() line: not available 
+AccessController.doPrivileged(PrivilegedExceptionAction<T>, AccessControlContext) line: not available [native method] 
+Launcher$ExtClassLoader(URLClassLoader).findClass(String) line: not available 
+Launcher$ExtClassLoader(ClassLoader).loadClass(String, boolean) line: not available 
+Launcher$AppClassLoader(ClassLoader).loadClass(String, boolean) line: not available 
+----------------------------------
+ En ese caso quizás hayas querido definir un método abstracto T getEntityType() en un Home abstracto (ver {{{./documentation/homes.html}Homes}}):
+
++--
+@Override
+public Class<T> getEntityType() {
+ T.class
+}
++--
+
+ La explicación teórica de por qué falla T.class es debido a que la información de tipo genérico se borra durante la ejecución. Por este motivo en tiempo de ejecución no tiene ni idea cómo resolverlo. Por eso la gente que desarrolló Arena persistence en la interfaz de Home pide que implementemos un método getEntityType concreto (ejemplo: Cliente.class).
+
+==============================
+
+* Problemas en la persistencia al grabar o recuperar los objetos 
+
+** Todos los atributos se guardan en null
+
+ Si se graban todos los atributos en null no estás definiendo las annotations @PersistentField y @Relation a los atributos. 
+
+==============================
+
+** Error al instanciar un objeto de dominio guardado
+  
+----------------------------------
+Exception in thread "main" java.lang.Exception: La clase ar.edu.celulares.domain.ModeloCelular no tiene un constructor vacio default.
+	at uqbar.arena.persistence.Session.createEntity(Session.scala:71)
+	at uqbar.arena.persistence.Session.findOrCreate(Session.scala:40)
+	at uqbar.arena.persistence.Session.get(Session.scala:45)
+----------------------------------
+ 
+ La clase de dominio no tiene un constructor vacío. Recordar que hay que respetar el contrato Java Bean,
+ fijate cómo se define un {{{./domain.html}objeto de dominio}}.
+
+==============================
+
+** Error al asignar la propiedad de un objeto de dominio
+
+----------------------------------
+Exception in thread "main" java.lang.Exception: Debe revisar el getter y setter de la propiedad descripcion para la entidad class ar.edu.celulares.domain.ModeloCelular
+	at uqbar.arena.persistence.mapping.FieldMapping.hidrate(FieldMapping.scala:109)
+	at uqbar.arena.persistence.mapping.EntityMapping$$anonfun$hidrate$1.apply(EntityMapping.scala:47)
+----------------------------------
+
+ Si definiste el par getter / setter, no respeta la convención Java Bean con el atributo.
+ <<Esto vale tanto para las annotations @PersistentField como para las @Relation>>.
+  
+ Hay que tener en cuenta
+ 
+ * mayúsculas y minúsculas
+ 
+ * que coincida el tipo que devuelve el getter, el tipo del parámetro que acepta el setter y el atributo sean el mismo 
+ (incluyendo los wrappers)
+ 
+ * si el atributo xxx es booleano, también se espera que el getter se llame getXxx y no isXxx
+ 
+ []   
+ 
+ Ejemplo:
+
++--
+String nomYape
+
+void setNomYApe(String nombre) {  // <== debería ser setNomYape o bien renombrar la variable a nomYape
+    ...
++--
+
+==============================
+
+** Error utilizando tipos primitivos
+
+----------------------------------
+Excepción: org.eclipse.core.runtime.AssertionFailedException: assertion failed: Could not read collection values
+    at org.eclipse.core.runtime.Assert.isTrue(Assert.java:111)
+    at org.eclipse.core.internal.databinding.beans.JavaBeanObservableSet.primGetValues(JavaBeanObservableSet.java:115)
+    at org.eclipse.core.internal.databinding.beans.JavaBeanObservableSet.getValues(JavaBeanObservableSet.java:122)
+    at org.eclipse.core.internal.databinding.beans.JavaBeanObservableSet.<init>(JavaBeanObservableSet.java:101)
+    at org.eclipse.core.internal.databinding.beans.JavaBeanObservableSet.<init>(JavaBeanObservableSet.java:57)
+    at org.uqbar.lacar.ui.impl.jface.bindings.JavaBeanTransacionalObservableSet.<init>(JavaBeanTransacionalObservableSet.java:22)
+    at org.uqbar.lacar.ui.impl.jface.bindings.JFaceObservableFactory.observeSet(JFaceObservableFactory.java:80)
+    at org.uqbar.lacar.ui.impl.jface.bindings.JFaceObservableFactory.observeSet(JFaceObservableFactory.java:70)
+    at org.uqbar.lacar.ui.impl.jface.lists.JFaceListItemsBindingBuilder.observeProperty(JFaceListItemsBindingBuilder.java:33)
+    at org.uqbar.arena.bindings.ObservableProperty.configure(ObservableProperty.java:68)
+----------------------------------
+ 
+ Este error se origina con los datos primitivos y sus wrappers: hay que respetar que si la variable es int el getter devuelva un int y el setter reciba un int como parámetro, no un Integer. Lo mismo con float y Float, double y Double, etc.
+ 
+==============================
+ 
+** No se actualizan los datos de ciertas entidades
+ 
+  * Hay que enviar un mensaje update() o save() al home para que se persista la información
+ 
+  * Si estamos grabando una entrada y la entrada tiene los datos del cliente hay que verificar que el getCliente() esté anotado con una @Relation 
+  y que la entidad Cliente esté anotada como @PersistentClass, de lo contrario no se actualizará esa información.
+
+===============================
+
+** Error al leer un grafo de objetos 
+ 
+------------------
+Error: InstantiationException
+Si al arrancar la app te aparece un error de este estilo:
+java.lang.InstantiationException: java.util.List
+ at java.lang.Class.newInstance(Class.java:364)
+ at uqbar.arena.persistence.reflection.TypeWrapper.newInstance(TypeWrapper.scala:87)
+ at uqbar.arena.persistence.mapping.CollectionRelationMapping.hidrate(RelationMapping.scala:116)
+------------------
+
+ Posiblemente el grafo de objetos se persistió con información errónea (por ejemplo un null en un @Relation de una colección). La solución consiste en eliminar el grafo de objetos persistido (en el directorio target/graphDB de tu proyecto, eliminá todo el directorio graphDB) y volver a correr la app. 
+  

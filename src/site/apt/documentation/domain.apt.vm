@@ -1,0 +1,130 @@
+ -----
+ Uqbar Project
+ -----
+ ${project.name}
+ -----
+
+ Los objetos de dominio son los que representan abstracciones útiles para el negocio: un cliente, una factura, un alumno, una llamada, un examen final, etc.
+ 
+Cómo configurar tus objetos de dominio
+
+ Los {{{./homes.html}Homes}} almacenan objetos de tipo T. Ahora hay que configurar tu T, tu objeto de dominio. 
+ Para que el home guarde la información en un medio persistente <<T debe respetar la convención {{{https://en.wikipedia.org/wiki/JavaBeans#JavaBean_conventions}JavaBean}}>>, 
+ entonces
+
+ * debe ser serializable
+
+ * debe tener un constructor sin parámetros
+
+ * y además cada propiedad xxx de tipo T debe tener sus métodos getters y setters correspondientes, como T getXxx y void setXxx(T t). 
+ 
+ []
+ 
+ Las propiedades booleanas también utilizan la convención get/set en lugar de is/set.
+  
+ <<IMPORTANTE:>> Si estás trabajando en un lenguaje con getters y setters implícitos (como Groovy) o que se definen mediante annotations
+ (como Xtend) lo más recomendable es que lo dejes por default como están. Si los definís vos, tené en cuenta estas restricciones, y que al definir un método 
+ a) las mayúsculas se distinguen de las minúsculas, b) no es lo mismo int que Integer, ni double que Double y c) respetá el mismo tipo T para el 
+ getter, el parámetro del setter y la definición del atributo. Tené en cuenta si trabajás en Scala que el lenguaje no respeta la convención
+ Java Bean.  
+
+ []
+
+ 
+ Además 
+ 
+ * tenés que anotar la clase como entidad persistente (@PersistentClass)
+  
+ * la entidad debe definir un id unívoco entero, este id lo llena el motor de persistencia cuando lo grabe
+ 
+ * hay que definir las propiedades que te interesa almacenar como campos de esa entidad persistente
+ 
+ * y hay definir las relaciones que ese objeto tiene con otros objetos
+
+ []
+
+ Es importante entender que si no lo marcás las variables con las annotations @PersistentField o @Relation ese dato no se persiste. 
+ 
+================================
+
+*  Persistent Class
+
+ Siguiendo el ejemplo de los celulares, la clase Celular agrega una annotation más:
+
++--
+@PersistentClass
+public class Celular extends Entity {
++--
+ 
+ La superclase Entity define una propiedad id (con su par getter / setter) que Arena persistence necesita. 
+ Y también hace que todas las entidades sean serializables, para poder bajarse a un formato binario.
+
++--
+public abstract class Entity implements Serializable {
+    public Integer getId() {
+        ....
+    }
+
+    public void setId(Integer id) {
+        ...
+    }
+
+    ...
+}
++--
+
+======================================
+
+ <<A partir de la versión 3.4.1 la información del objeto que se va a guardar está asociada a variables de instancia y ya no a las propiedades (getters).>> 
+
+* Persistent fields
+
+ Permite definir un atributo contra un tipo primitivo. Se anota con un @PersistentField.
+
++--
+@PersistentField Integer numero
+@PersistentField String nombre
+@PersistentField Boolean recibeResumenCuenta
++--
+
+ Sirve para
+  
+ * enums
+ 
+ * tipos primitivos: int, float, double y sus wrappers (Integer, Float, Double)
+ 
+ * String
+
+ * BigDecimal
+ 
+ * Date
+
+ []
+ 
+ Si quiero tener atributos no persistentes (transients) simplemente no les escribo annotations.
+
+===============================
+  
+* Relations
+
+ Como la persistencia se hace con un grafo, hay que marcar qué referencias tenemos hacia otros objetos, a través de la annotation @Relation:
+
++--
+@Relation ModeloCelular modeloCelular
++--
+
+ * Las colecciones (ArrayList, TreeSet, etc.) también se deben anotar como @Relation.
+ 
+ * Y por supuesto, también los strategies por más que sean stateless, porque la referencia del objeto hacia ese strategy es importante para el negocio.
+
+ []
+ 
+ A su vez, un ModeloCelular es otro T que hay que mapear, para poder almacenar la información necesaria para nuestra aplicación:
+
++--
+@PersistentClass
+public class ModeloCelular extends Entity {
+
+	@PersistentField String descripcion
++--
+  

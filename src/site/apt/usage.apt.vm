@@ -1,0 +1,59 @@
+ -----
+ Uqbar Project
+ -----
+ ${project.name}
+ -----
+
+Repositorios de Maven
+
+ Arena Persistence está pensado para ser utilizado en un proyecto Maven. Dado que <<Arena-persistence>> 
+ está deployado en Maven Central, no es necesario configurar ningún repositorio adicional
+ en tu archivo settings.xml
+
+ Pero en caso de que tengas inconvenientes, te dejamos el repositorio de Uqbar para agregar a tu archivo de 
+ configuración de Maven:
+
++---------------------------------------------+
+  <profiles>
+        <profile>
+              <id>uqbar-wiki</id>
+              <repositories>
+                    <repository>
+                        <id>uqbar-wiki.org-releases</id>
+                        <name>uqbar-wiki.org-releases</name>
+                        <url>http://uqbar-wiki.org/mvn/releases</url>
+                    </repository>
+                    <repository>
+                        <snapshots/>
+                        <id>uqbar-wiki.org-snapshots</id>
+                        <name>uqbar-wiki.org-snapshots</name>
+                        <url>http://uqbar-wiki.org/mvn/snapshots</url>
+                   </repository>
+              </repositories>
+        </profile>
+  </profiles>
+
+  <activeProfiles>
+       <activeProfile>uqbar-wiki</activeProfile>
+  </activeProfiles>
++---------------------------------------------+
+
+ 
+
+Agregar la dependencia a Arena Persistence
+
+ Te dejamos la dependencia que debés incluir en tu proyecto Maven, donde estarán tus objetos de dominio:
+
++---------------------------------------------+
+
+<dependency>
+	<groupId>org.uqbar-project</groupId>
+	<artifactId>arena-pers</artifactId>
+	<version>${project.version}</version>
+</dependency>
+
++---------------------------------------------+
+
+ En caso de duda te dejamos el {{{http://search.maven.org}link}} a la lista de versiones disponibles de los componentes arena-pers.
+ 
+

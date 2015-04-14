@@ -1,0 +1,50 @@
+ -----
+ Uqbar Project
+ -----
+ ${project.name}
+ -----
+
+Cómo desarrollar Arena Persistence
+ 
+ Arena Persistence está desarrollado en {{{http://www.oracle.com/technetwork/java/index.html}Java}} y {{{http://www.scala-lang.org/}Scala}}. 
+ Si te interesa colaborar o extender las capacidades de este framework te dejamos todo lo que necesitás
+ para hacerlo.  
+
+
+* Entorno
+ 
+   * Java Development Kit 1.7 (pronto haremos la migración a Java 8) 
+   
+   * Scala 2.11 
+   
+   * m2e-Scala: plugin de integración de Scala para Maven
+
+
+* Descargar fuentes del Proyecto
+
+ {{https://github.com/uqbar-project/arena-pers}}
+ 
+  
+* IDE
+ 
+ Como el proyecto está mavenizado, podés usar cualquier entorno de desarrollo que soporte Scala 2.11 
+ 
+
+* Configuración de Maven
+
+ No es necesario configurar ningún archivo settings.xml de Maven para desarrollar los componentes 
+ de Arena Persistence. 
+ 
+Quiero mejorar Arena Persistence...
+ 
+ Si te interesa participar mandanos un mail a 
+ 
+[./images/mailTesoun.png] 
+
+ Pablo Tesone
+ 
+ 
+[./images/mailDodi.png] 
+
+ Fernando Dodino
+   

@@ -1,0 +1,37 @@
+ -----
+ Uqbar Project
+ -----
+ ${project.name}
+ -----
+
+Introducción
+
+ <<Arena Persistence es un framework de persistencia sencillo>> que tiene fines didácticos, 
+ trabaja con un esquema persistente de grafos en {{{http://neo4j.com/}Neo4J}}. 
+ 
+ El contrato que trae Arena Persistence es muy sencillo, basta con
+
+ * anotar cuáles son las clases a persistir
+ 
+ * anotar los atributos persistentes
+
+ * y realizar consultas a partir de un repositorio especial, que hace la búsqueda en el medio persistente
+
+[]
+ 
+ Arena es utilizado como alternativa para persistir los trabajos prácticos desde el año 2012 en la 
+ {{{http://frba.utn.edu.ar/}Universidad Tecnológica Nacional}}.
+
+
+Cómo lo uso
+
+ Podés chequear la página {{{./usage.html}Uso}} para entender cómo integrar Arena Persistence con tu proyecto.
+ 
+Documentación
+
+ Y la página {{{./documentation.html}Documentación}} te va a enseñar los conceptos principales a partir de ejemplos
+ concretos.
+  
+Desarrollo
+  
+ Si querés colaborar con el desarrollo podés mirar {{{./development.html}esta página}}.

@@ -1,0 +1,47 @@
+ -----
+ Uqbar Project
+ -----
+ ${project.name}
+ -----
+
+Inicialización de la aplicación
+
+ Es necesario que lo primero que haga tu aplicación, antes de acceder a los datos de la persistencia, 
+ sea configurar la misma. Para realizar eso, en algún lado tenés que escribir:
+ 
++-- 
+Configuration.configure()
++--
+
+ La clase Configuration que nos interesa es uqbar.arena.persistence.Configuration 
+ 
+ <<¡OJO!>> que hay varias clases que se llaman Configuration, pero están en distintos paquetes.
+
+ Lo que hace este método estático es configurar la base de datos embebida y recorrer tus clases para 
+ leer las annotations. En una aplicación con Arena-UI el lugar donde configurar es cuando 
+ levanta la aplicación:
+ 
++--
+class CelularApplication extends Application {
+	
+	static def void main(String[] args) { 
+		new CelularApplication().start()
+	}
+
+	override createMainWindow() {
+		Configuration.configure()
+		ApplicationContext.instance.configureSingleton(typeof(ModeloCelular), new RepoModelos)
+		ApplicationContext.instance.configureSingleton(typeof(Celular), new RepoCelulares)
+		return new BuscarCelularesWindow(this)
+	}
+	
+}
++--
+ 
+* ¿Dónde se guarda la información?
+
+ En el mismo proyecto donde estás, en el directorio target/graphDB. 
+ La base de datos que utiliza es una implementación embebida (corre en la misma JVM que la aplicación) 
+ de Neo4j, que es una base de datos orientada a grafos. Te dejamos el link al sitio principal de {{{http://neo4j.com/}Neo4J}}.
+  
+  

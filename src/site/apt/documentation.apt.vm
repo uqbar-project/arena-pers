@@ -1,0 +1,20 @@
+ -----
+ Uqbar Project
+ -----
+ ${project.name}
+ -----
+
+Documentación
+
+ Para poder entender Arena Persistence, es necesario conocer estos temas:
+
+    * {{{./documentation/homes.html}Homes / Objetos repositorio}}
+
+    * {{{./documentation/domain.html}Objetos de dominio}}
+
+    * {{{./documentation/initialization.html}Configuración / Inicialización de la app}}
+
+ * Podés bajarte los ejemplos {{{https://svn2.xp-dev.com/svn/uqbar/examples/dds/datos/arena-persistence/}en esta página}} 
+  
+ * {{{./documentation/troubleshooting.html}Troubleshooting (o cómo solucionar problemas)}} 
+
