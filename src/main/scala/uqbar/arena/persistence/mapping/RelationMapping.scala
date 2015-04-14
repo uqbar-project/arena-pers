@@ -25,27 +25,43 @@ object RelationMapping {
 abstract class RelationMapping(name: String, wrappedType: TypeWrapper) extends Mapping {
   checkRelation();
 
-  def query(queryBuilder: QueryBuilder, target: Object) {
-    val value = ReflectionUtils.invokeGetter(target, this.name).asInstanceOf[Collection[Entity]]
-    if (value != null) {
-      throw new Exception("No se puede hacer query by example con relaciones entre objetos.")
-    }
-  }
-
   def checkRelation() {
     if (wrappedType.isNative && wrappedType.isEnum && wrappedType.isBuiltinType) {
-      throw new ConfigurationException(name +  ":la annotation Relation no es aplicable a tipos nativos, Enum, String o java.util.Date:" + wrappedType.name);
+      throw new ConfigurationException(name + ":la annotation Relation no es aplicable a tipos nativos, Enum, String o java.util.Date:" + wrappedType.name);
     }
     if (!wrappedType.isCollectionOfPersistent && !wrappedType.isPersistent) {
       throw new ConfigurationException(name + ": la annotation Relation es solo aplicable a PersistentClass o a colecciones de PersistentClass:" + wrappedType.name);
+    }
+  }
+  
+  def invokeGetter(target: Object, propertyName: String) : Any = {
+    try {
+    	return ReflectionUtils.invokeGetter(target, propertyName)
+    } catch {
+      case e : RuntimeException => throw new Exception("Debe revisar el getter y setter de la propiedad " + propertyName + " para la entidad " + target.getClass)
+    }
+  }
+  
+  def invokeSetter(target: Object, propertyName: String, value: Any) {
+    try {
+    	ReflectionUtils.invokeSetter(target, propertyName, value)
+    } catch {
+      case e : RuntimeException => throw new Exception("Debe revisar el getter y setter de la propiedad " + propertyName + " para la entidad " + target.getClass)
     }
   }
 }
 
 class SimpleRelationMapping(name: String, wrappedType: TypeWrapper) extends RelationMapping(name, wrappedType) {
 
+  def query(queryBuilder: QueryBuilder, target: Object) {
+    val value = this.invokeGetter(target, this.name).asInstanceOf[Entity]
+    if (value != null) {
+      throw new Exception("Arena persistence no permite hacer query by example con relaciones entre objetos.")
+    }
+  }
+
   def persist(session: Session, node: Node, target: Object): Unit = {
-    val value = ReflectionUtils.invokeGetter(target, this.name)
+    val value = this.invokeGetter(target, this.name) 
     val relType = DynamicRelationshipType.withName(this.name)
     val graphDB = session.graphDB
 
@@ -55,7 +71,7 @@ class SimpleRelationMapping(name: String, wrappedType: TypeWrapper) extends Rela
     }
 
     if (value == null) {
-      return ;
+      return
     }
 
     val entity = value.asInstanceOf[Entity]
@@ -72,19 +88,29 @@ class SimpleRelationMapping(name: String, wrappedType: TypeWrapper) extends Rela
     val r = node.getSingleRelationship(relType, Direction.OUTGOING)
 
     if (r == null) {
-      ReflectionUtils.invokeSetter(target, this.name, null)
+      this.invokeSetter(target, this.name, null)
       return
     }
 
     val otherNode = r.getEndNode()
 
     val entity: Any = session.get(otherNode.getProperty("clazzName").toString(), otherNode.getId().intValue())
-    ReflectionUtils.invokeSetter(target, this.name, entity)
+    try {
+    	this.invokeSetter(target, this.name, entity)
+    } catch {
+      case e : RuntimeException => throw new Exception("Debe revisar el getter y setter de la propiedad " + this.name + " para la entidad " + target.getClass)
+    }
   }
-
 }
 
 class CollectionRelationMapping(name: String, wrappedType: TypeWrapper) extends RelationMapping(name, wrappedType) {
+  def query(queryBuilder: QueryBuilder, target: Object) {
+    val value = this.invokeGetter(target, this.name).asInstanceOf[Collection[Entity]]
+    if (value != null && !value.isEmpty()) {
+      throw new Exception("Arena persistence no permite hacer query by example con relaciones entre objetos.")
+    }
+  }
+
   def persist(session: Session, node: Node, target: Object): Unit = {
     val relType = DynamicRelationshipType.withName(this.name)
     val graphDB = session.graphDB
@@ -92,7 +118,7 @@ class CollectionRelationMapping(name: String, wrappedType: TypeWrapper) extends 
     for (r <- rels) {
       r.delete();
     }
-    val value = ReflectionUtils.invokeGetter(target, this.name).asInstanceOf[Collection[Entity]]
+    val value = this.invokeGetter(target, this.name).asInstanceOf[Collection[Entity]]
     if (value == null || value.isEmpty())
       return
 
@@ -110,11 +136,11 @@ class CollectionRelationMapping(name: String, wrappedType: TypeWrapper) extends 
     val graphDB = session.graphDB
     val rels = node.getRelationships(relType, Direction.OUTGOING)
 
-    var value = ReflectionUtils.invokeGetter(target, this.name).asInstanceOf[Collection[Entity]]
+    var value = this.invokeGetter(target, this.name).asInstanceOf[Collection[Entity]]
 
     if (value == null || !value.isEmpty()) {
       value = this.wrappedType.newInstance();
-      ReflectionUtils.invokeSetter(target, this.name, value)
+      this.invokeSetter(target, this.name, value)
     }
 
     for (r <- rels) {

@@ -26,6 +26,15 @@
 		<tag>HEAD</tag>
 	</scm>
 
+	<distributionManagement>
+		<site>
+			<id>sites-uqbar-project.org</id>
+			<url>ftp://arena.uqbar-project.org/arena-pers/</url>
+		</site>
+	</distributionManagement>
+	
+	<url>http://arena.uqbar-project.org/arena-pers</url>
+
 	<dependencies>
 		<!-- UQBAR -->
 		<dependency>

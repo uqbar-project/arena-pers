@@ -1,12 +1,14 @@
 package uqbar.arena.persistence.mapping
 
-import java.lang.reflect.Type
+import scala.collection.JavaConversions._
 import scala.collection.mutable.HashSet
 import scala.collection.mutable.Set
-import uqbar.arena.persistence.Session
-import org.uqbar.commons.model.Entity
+
+import org.neo4j.graphdb.DynamicRelationshipType
 import org.neo4j.graphdb.Node
-import scala.collection.JavaConversions._
+import org.uqbar.commons.model.Entity
+
+import uqbar.arena.persistence.Session
 
 class EntityMapping[T <: Entity](clazz: Class[T]) {
   var mappings = new HashSet[Mapping]();
@@ -58,7 +60,7 @@ class EntityMapping[T <: Entity](clazz: Class[T]) {
 
   def searchByExample(entity: T, session: Session): List[T] = {
     val graphDB = session.graphDB
-    val queryBuilder = new QueryBuilder();
+    val queryBuilder = new QueryBuilder()
 
     for (m <- mappings) {
       m.query(queryBuilder, entity)
@@ -68,8 +70,9 @@ class EntityMapping[T <: Entity](clazz: Class[T]) {
     val nodes = {
       if (!queryString.isEmpty())
         graphDB.index().forNodes("Attr-" + entity.getClass().toString()).query(queryString).iterator()
-      else
+      else {
         graphDB.index().forNodes("CLASS").get("clazzName", clazz.getName()).iterator()
+      }
     }
     session.convertTo(this.clazz, nodes);
   }
@@ -94,4 +97,3 @@ class QueryBuilder() {
     builder.toString
   }
 }
-

@@ -27,6 +27,21 @@ public class Celular extends Entity {
 		this.precioPorMinuto = precioPorMinuto;
 	}
 
+	@Override 
+	public String toString() {
+		StringBuffer result = new StringBuffer();
+		result.append("Celular ");
+		result.append(" - modelo: " + getModelo()); 
+		result.append(" - numero: " + getNumero());
+		if (getDuenio() == null) {
+			result.append(" - sin duenio ");
+		} else {
+			result.append(" - duenio: " + getDuenio().getNombreCompleto());
+		}
+		result.append(" - precio x min: " + getPrecioPorMinuto());
+		return result.toString();
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

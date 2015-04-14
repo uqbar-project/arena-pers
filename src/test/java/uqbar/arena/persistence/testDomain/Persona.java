@@ -125,5 +125,19 @@ public class Persona extends Entity {
 			return false;
 		return true;
 	}
+
+	public String getNombreCompleto() {
+		StringBuffer result = new StringBuffer();
+		if (nombre != null) {
+			result.append(nombre);
+		}
+		if (apellido != null) {
+			if (result.length() > 0) {
+				result.append(" ");
+			}
+			result.append(apellido);	
+		}
+		return result.toString();
+	}
 	
 }

@@ -1,32 +1,34 @@
 package uqbar.arena.persistence.mapping
 
+import java.lang.Long
 import java.lang.reflect.Type
+import java.math.BigDecimal
+import java.util.Date
+
 import org.apache.log4j.Logger
 import org.neo4j.graphdb.Node
-import uqbar.arena.persistence.ConfigurationException
-import uqbar.arena.persistence.reflection.TypeWrapper
 import org.uqbar.commons.utils.ReflectionUtils
-import java.util.Date
-import java.lang.Long
+
+import uqbar.arena.persistence.ConfigurationException
 import uqbar.arena.persistence.Session
-import java.math.BigDecimal
+import uqbar.arena.persistence.reflection.TypeWrapper
 
 object FieldMapping {
-  
+
   def create(name: String, fieldType: Type): FieldMapping = {
     val wrappedType = new TypeWrapper(fieldType)
 
-//    if (wrappedType.isEnum) {
-//      return new EnumFieldMapping(name, wrappedType)
-//    }
-//
-//    if (wrappedType.isDate) {
-//      return new DateFieldMapping(name, wrappedType)
-//    }
-//
-//    if (wrappedType.isBigDecimal) {
-//      return new BigDecimalFieldMapping(name, wrappedType)
-//    }
+    //    if (wrappedType.isEnum) {
+    //      return new EnumFieldMapping(name, wrappedType)
+    //    }
+    //
+    //    if (wrappedType.isDate) {
+    //      return new DateFieldMapping(name, wrappedType)
+    //    }
+    //
+    //    if (wrappedType.isBigDecimal) {
+    //      return new BigDecimalFieldMapping(name, wrappedType)
+    //    }
 
     return new FieldMapping(name, wrappedType)
   }
@@ -54,7 +56,11 @@ class FieldMapping(name: String, wrappedType: TypeWrapper) extends Mapping {
   }
 
   protected def getValue(target: Object): Object = {
-	  convertValueAfterGet(ReflectionUtils.invokeGetter(target, this.name))
+    try {
+    	convertValueAfterGet(ReflectionUtils.invokeGetter(target, this.name))
+    } catch {
+      case e : RuntimeException => throw new Exception("Debe revisar el getter y setter de la propiedad " + this.name + " para la entidad " + target.getClass)
+    }
   }
 
   protected def convertValueAfterGet(originalValue: Object): Object = {
@@ -70,13 +76,17 @@ class FieldMapping(name: String, wrappedType: TypeWrapper) extends Mapping {
       return if (originalValue == null) null else originalValue.toString()
     }
 
+    if (wrappedType.isInt) {
+      return if (originalValue == null || originalValue == 0) null else originalValue.toString()
+    }
+
     originalValue
   }
 
   def convertValueBeforeSet(originalValue: Object): Object = {
-    if(originalValue == null)
+    if (originalValue == null)
       return null
-    
+
     if (wrappedType.isEnum) {
       return wrappedType.enumValue(originalValue)
     }
@@ -89,11 +99,19 @@ class FieldMapping(name: String, wrappedType: TypeWrapper) extends Mapping {
       return new BigDecimal(originalValue.asInstanceOf[String])
     }
 
+    if (wrappedType.isInt) {
+      return new Integer(originalValue.toString)
+    }
+
     originalValue
   }
 
   def hidrate(session: Session, node: Node, target: Object) = {
-    ReflectionUtils.invokeSetter(target, this.name, convertValueBeforeSet(node.getProperty(this.name, null)))
+    try {
+    	ReflectionUtils.invokeSetter(target, this.name, convertValueBeforeSet(node.getProperty(this.name, null)))
+    } catch {
+      case e : RuntimeException => throw new Exception("Debe revisar el getter y setter de la propiedad " + this.name + " para la entidad " + target.getClass)
+    }
   }
 
   def query(queryBuilder: QueryBuilder, target: Object) {
@@ -104,7 +122,7 @@ class FieldMapping(name: String, wrappedType: TypeWrapper) extends Mapping {
         queryBuilder.add(this.name, stringValue)
     }
   }
-  
-  def log() : Logger = Logger.getLogger(this.getClass())
-  
+
+  def log(): Logger = Logger.getLogger(this.getClass())
+
 }

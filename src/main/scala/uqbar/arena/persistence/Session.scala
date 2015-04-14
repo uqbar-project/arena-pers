@@ -8,6 +8,7 @@ import org.neo4j.graphdb.Transaction
 import scala.collection.JavaConversions._
 import org.neo4j.graphdb.Node
 import scala.collection.immutable.Nil
+import org.neo4j.graphdb.Relationship
 
 class Session(graphDB: GraphDatabaseService) {
   protected var entities: Map[String, Object] = new HashMap[String, Object]()
@@ -66,7 +67,13 @@ class Session(graphDB: GraphDatabaseService) {
   }
   
   def createEntity(clazzName: String, id: Int): Object = {
-    val clazz = Class.forName(clazzName);
+    val clazz = Class.forName(clazzName)
+    try {
+      clazz.getConstructor().getName()
+    } catch {
+      case ie : NoSuchMethodException => throw new Exception("La clase " + clazzName + " no tiene un constructor vacio default.") 
+    }
+    
     val obj = clazz.newInstance().asInstanceOf[Entity]
     obj.setId(id)
 
@@ -99,7 +106,7 @@ class Session(graphDB: GraphDatabaseService) {
     }
     r
   }
-  
+
   def searchByExample[T <: Entity](example:T):List[T] = {
     assert(example != null, "El objeto ejemplo no puede ser null")
     Configuration.mappingFor(example).searchByExample(example,this) 

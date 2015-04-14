@@ -58,6 +58,10 @@ class TypeWrapper(t: Type) {
     runIfClass({ c: Class[_] => c.getAnnotation(classOf[PersistentClass]) != null }, { _ => false })
   }
 
+  def isInt(): Boolean = {
+    runIfClass({ c: Class[_] => c.getName() == "int" }, { _ => false })
+  }
+
   def isDate(): Boolean = {
     runIfClass({ c: Class[_] => c.getName() == "java.util.Date" }, { _ => false })
   }
