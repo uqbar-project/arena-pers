@@ -34,6 +34,33 @@ Exception in thread "main" uqbar.arena.persistence.ConfigurationException: Se de
 
 ========
 
+* Problemas al reiniciar una aplicación
+
+ Cuando la aplicación corre sin problemas pero al bajar y volver a levantar la misma obtienen el siguiente error:
+
+----------------------------------
+Exception in thread "main" java.lang.InstantiationException: java.util.List
+at java.lang.Class.newInstance(Class.java:427)
+at uqbar.arena.persistence.reflection.TypeWrapper.newInstance(TypeWrapper.scala:91)
+...
+----------------------------------
+
+ Es debido a no tener inicializadas las colecciones de nuestro dominio. Cuando Arena levanta el grafo persistido y comienza a instanciar los objetos de dominio mediante su constructor vacío, en este objeto nuevo no se encuentran asignadas las colecciones. Por ejemplo para una definición como esta:
+ 
++--
+List<Receta> recetasFavoritas;
++--
+
+ En nuestro constructor vacío de la clase que la contiene debería inicializarla así:
+
++--
+this.recetasFavoritas = new ArrayList<Receta>();
++--
+
+ De esta forma la colección estará correctamente inicializada para cuando Arena necesite inyectar los elementos que pertenecen a la colección.
+
+========
+
 * Problemas al hacer las búsquedas
 
 ** No funciona la búsqueda by example
