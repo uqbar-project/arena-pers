@@ -7,9 +7,9 @@ import scala.sys.ShutdownHookThread
 import scala.util.DynamicVariable
 
 object SessionManager {
-  protected var graphDB: GraphDatabaseService = null;
+  protected var graphDB: GraphDatabaseService = null
   protected var testMode = false
-//  protected var _session = new DynamicVariable[Session](null);
+//  protected var _session = new DynamicVariable[Session](null)
   protected var session:Session = null
   
   def startDB() {
@@ -32,14 +32,14 @@ object SessionManager {
     try {
       session.beginTransaction()
       value = body
-      session.commit();
+      session.commit()
     } catch {
-      case e: Exception => session.rollback(); throw e;
+      case e: Exception => session.rollback(); throw e
     } finally{
-      session.closeTransaction();
+      session.closeTransaction()
     }
 
-    return value;
+    return value
   }
 
   def currentSession(): Session = {
@@ -51,7 +51,7 @@ object SessionManager {
   }
 
   def testMode(db: GraphDatabaseService) {
-    graphDB = db;
-    testMode = true;
+    graphDB = db
+    testMode = true
   }
 }

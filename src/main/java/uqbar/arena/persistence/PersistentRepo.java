@@ -3,11 +3,11 @@ package uqbar.arena.persistence;
 import java.util.List;
 
 import org.uqbar.commons.model.Entity;
-import org.uqbar.commons.model.Home;
+import org.uqbar.commons.model.Repo;
 
-public abstract class PersistentHome<T extends Entity> implements Home<T> {
+public abstract class PersistentRepo<T extends Entity> implements Repo<T> {
 
-	private PersistentHomeImpl<T> homeImpl = new PersistentHomeImpl<T>();
+	private PersistentRepoImpl<T> homeImpl = new PersistentRepoImpl<T>();
 
 	public T searchById(int id) {
 		return homeImpl.searchById(id, this);
