@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>arena-pers</artifactId>
 	<packaging>jar</packaging>
-	<version>3.6.1-SNAPSHOT</version>
+	<version>3.6.1</version>
 	<name>Arena Persistence</name>
 
 	<parent>
@@ -23,7 +23,7 @@
 		<connection>scm:git:${scm.gitServer}/arena-pers</connection>
 		<developerConnection>scm:git:${scm.gitServer}/arena-pers</developerConnection>
 		<url>scm:git:${scm.gitServer}/arena-pers</url>
-		<tag>HEAD</tag>
+		<tag>v3.6.1</tag>
 	</scm>
 
 	<distributionManagement>
