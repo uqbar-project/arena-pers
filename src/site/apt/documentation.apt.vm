@@ -8,7 +8,7 @@ Documentación
 
  Para poder entender Arena Persistence, es necesario conocer estos temas:
 
-    * {{{./documentation/homes.html}Homes / Objetos repositorio}}
+    * {{{./documentation/homes.html}Objetos repositorio}}
 
     * {{{./documentation/domain.html}Objetos de dominio}}
 

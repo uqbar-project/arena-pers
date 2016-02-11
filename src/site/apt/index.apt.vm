@@ -19,9 +19,10 @@ Introducción
 
 []
  
- Arena es utilizado como alternativa para persistir los trabajos prácticos desde el año 2012 en la 
- {{{http://frba.utn.edu.ar/}Universidad Tecnológica Nacional}}.
-
+ Arena es utilizado como alternativa en algunos cursos para persistir los trabajos prácticos 
+ de Diseño de Sistemas desde el año 2012 en la {{{http://frba.utn.edu.ar/}Universidad Tecnológica Nacional}}. 
+ A partir del 2016 se suma como opción de persistencia no-relacional en la materia Programación
+ con Herramientas Modernas de la {{{http://www.unsam.edu.ar/}Universidad Nacional de San Martín}}.
 
 Cómo lo uso
 

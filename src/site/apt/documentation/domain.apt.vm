@@ -8,8 +8,8 @@
  
 Cómo configurar tus objetos de dominio
 
- Los {{{./homes.html}Homes}} almacenan objetos de tipo T. Ahora hay que configurar tu T, tu objeto de dominio. 
- Para que el home guarde la información en un medio persistente <<T debe respetar la convención {{{https://en.wikipedia.org/wiki/JavaBeans#JavaBean_conventions}JavaBean}}>>, 
+ Los {{{./homes.html}Repos}} almacenan objetos de tipo T. Ahora hay que configurar tu T, tu objeto de dominio. 
+ Para que el repo guarde la información en un medio persistente <<T debe respetar la convención {{{https://en.wikipedia.org/wiki/JavaBeans#JavaBean_conventions}JavaBean}}>>, 
  entonces
 
  * debe ser serializable
@@ -35,7 +35,7 @@ Cómo configurar tus objetos de dominio
  
  * tenés que anotar la clase como entidad persistente (@PersistentClass)
   
- * la entidad debe definir un id unívoco entero, este id lo llena el motor de persistencia cuando lo grabe
+ * la entidad debe definir un id unívoco entero, este id lo llena el motor de persistencia cuando lo almacena
  
  * hay que definir las propiedades que te interesa almacenar como campos de esa entidad persistente
  

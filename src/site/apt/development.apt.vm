@@ -13,7 +13,7 @@ Cómo desarrollar Arena Persistence
 
 * Entorno
  
-   * Java Development Kit 1.7 (pronto haremos la migración a Java 8) 
+   * Java Development Kit 1.8 
    
    * Scala 2.11 
    

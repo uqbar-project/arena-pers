@@ -4,9 +4,9 @@
  ${project.name}
  -----
 
-Homes
+Repos
 
- Los objetos repositorio o <<Homes>> son los responsables de 
+ Los objetos repositorio o <<Repos>> son los responsables de 
 
  * agregar
  
@@ -19,40 +19,41 @@ Homes
  []
    
 
- Los homes de tu aplicación deben
+ Los repos de tu aplicación deben extender de PersistentRepo<T> donde T es 
  
- * ser serializables y 
-
- * extender de PersistentHome<T> donde T es el tipo de objeto que estás guardando en el home.
+ el tipo de objeto que estás guardando en el repositorio.
 
  []
 
  También tenés que definirle los métodos Class<T> getEntityType() y T createExample() en las subclases concretas 
- (ojo que si vas a definir una clase abstracta AbstractMiAplicacionHome que unifique comportamiento 
- igualmente debés dejar que las subclases de ese Home redefinan ambos métodos ya que no conocés la
+ (ojo que si vas a definir una clase abstracta AbstractMiAplicacionRepo que unifique comportamiento 
+ igualmente debés dejar que las subclases de ese Repo redefinan ambos métodos ya que no conocés la
  clase concreta de T).
  
- Los homes de tu aplicación te van a dar la forma de acceder a los datos. Al 
- extender de PersistentHome tus Homes van a entender los siguientes mensajes:
+ Los repos de tu aplicación definen la forma de acceder a los datos. Al 
+ extender de PersistentRepo heredás los siguientes mensajes:
 
  * <<List<T> allInstances()>>: Devuelve todas las instancias persistidas.
 
- * <<void create(T object)>>: Persiste un nuevo objeto en la base de datos. 
+ * <<void create(T object)>>: Persiste un nuevo objeto en la base de grafos. 
 
- * <<void update(T object)>>: Actualiza la información de la base de datos 
+ * <<void update(T object)>>: Actualiza la información de la base de grafos 
  de un objeto ya persistido previamente.
  
- * <<void delete(T object)>>: Elimina de la base de datos el objeto pasado.
+ * <<void delete(T object)>>: Elimina de la base de grafos el objeto pasado.
  
  * <<T searchById(int id)>>: Busca y devuelve un solo objeto con el id pasado por parámetro.
 
- * <<List<T> searchByExample(T example)>>: Devuelve una lista con los objetos del mismo tipo del ejemplo, en la lista van a estar los objetos que tengan los mismos atributos no nulos que el ejemplo tenga. 
-   Ej: Si paso un example de Persona con solamente el nombre distinto de null, por ejemplo "Pablo", me va a traer todas las personas con ese nombre.
+ * <<List<T> searchByExample(T example)>>: Devuelve una lista con instancias del tipo T, en la lista van a estar los objetos que tengan los mismos atributos no nulos que el objeto ejemplo que pasaste como parámetro. 
+   Ej: Si paso un example de Persona con todos los atributos nulos y el nombre distinto de null, por ejemplo "Pablo", me va a traer todas las personas con ese nombre.
+   <<Es importante tener cuidado que el objeto example no tenga tipos primitivos>> (int, boolean, etc.) 
+   <<ni inicializaciones por defecto para los atributos anotados con @PersistentField>> (tanto en el constructor como en la definición de la clase)
+   porque de lo contrario vas a tener inconvenientes a la hora de hacer este tipo de búsquedas.
    <<Los queries by example sobre relaciones no está soportada por el momento.>> 
-
+   
  []
 
- Atención con el uso de estos mensajes, una buena distribución de responsabilidades estaría pensada para que los homes de tu aplicación le den servicios de mayor nivel y la aplicación use algo más
+ Atención con el uso de estos mensajes, una buena distribución de responsabilidades estaría pensada para que los repos de tu aplicación le den servicios de mayor nivel y la aplicación use algo más
  que un searchByExample.
 
 
@@ -71,28 +72,28 @@ new Pelicula => [
     
 Definición
 
- Para definir un home de celulares, la definición del repositorio en Java sería
+ Para definir un repo de celulares, la definición del repositorio en Java sería
 
 +--
 @Observable
-public class RepositorioCelulares extends PersistentHome<Celular> implements Serializable {
+public class RepositorioCelulares extends PersistentRepo<Celular> {
 +--
 
  El mismo ejemplo en Xtend es:
   
 +--
 @Observable
-class RepositorioCelulares extends PersistentHome<Celular> implements Serializable {
+class RepositorioCelulares extends PersistentRepo<Celular> {
 +--
 
 Ejemplo
 
 * Xtend
 
- A continuación mostramos cómo sería un objeto home o repositorio de clientes de una compañía de celulares:
+ A continuación mostramos cómo sería un objeto repo o repositorio de clientes de una compañía de celulares:
  
 +--
-class RepoCelulares extends PersistentHome<Celular> {
+class RepoCelulares extends PersistentRepo<Celular> {
 
 	override def getEntityType() {
 		typeof(Celular)
@@ -181,8 +182,12 @@ class RepoCelulares extends PersistentHome<Celular> {
 	def search(Integer unNumero, String unNombre) {
 		searchByExample(
 			new Celular => [
-				numero = unNumero
-				nombre = unNombre
+				if (unNumero != null && unNumero > 0) {
+					numero = unNumero
+				}
+				if (unNombre != null && !unNombre.equals("")) {
+					nombre = unNombre
+				}
 			])
 	}
 

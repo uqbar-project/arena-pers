@@ -29,7 +29,7 @@ Exception in thread "main" uqbar.arena.persistence.ConfigurationException: La an
 ----------------------------------
 Exception in thread "main" uqbar.arena.persistence.ConfigurationException: Se debe inicializar la configuración de la persistencia llamando a Configure.configure() antes de realizar cualquier cosa.
 ----------------------------------
- Estás invocando a un Home que quiere hacer una búsqueda o una actualización previo a la configuración del motor de persistencia de Arena. La solución es invocar Configuration.configure() antes de utilizar las homes, al inicio
+ Estás invocando a un Repo que quiere hacer una búsqueda o una actualización previo a la configuración del motor de persistencia de Arena. La solución es invocar Configuration.configure() antes de utilizar las repos, al inicio
  de la aplicación. Para más información fijate cómo se {{{./initialization.html}inicializa la aplicación}}.
 
 ========
@@ -63,26 +63,48 @@ this.recetasFavoritas = new ArrayList<Receta>();
 
 * Problemas al hacer las búsquedas
 
-** No funciona la búsqueda by example
+** No funciona la búsqueda by example (1)
 
 ----------------------------------
 Exception in thread "main" java.lang.Exception: Arena persistence no permite hacer query by example con relaciones entre objetos.
 at uqbar.arena.persistence.mapping.RelationMapping.query(RelationMapping.scala:31)
 at uqbar.arena.persistence.mapping.EntityMapping$$anonfun$searchByExample$1.apply(EntityMapping.scala:64)
 ----------------------------------
- Como señalamos en la página de {{{./homes.html}Homes}}, no es posible hacer una búsqueda by example a través de relaciones (sólo persistent fields). La solución pasa por
+ Como señalamos en la página de {{{./homes.html}Repos}}, no es posible hacer una búsqueda by example a través de relaciones (sólo persistent fields). La solución pasa por
   
  [[1]] hacer una búsqueda sin filtro o bien con filtros simples, y luego completar el filtro de los objetos en memoria, o 
 
- [[2]] en caso de ser posible, generar otro home que tenga una lógica diferente para navegar el grafo de objetos, que se adapte mejor al caso de uso.
+ [[2]] en caso de ser posible, generar otro repo que tenga una lógica diferente para navegar el grafo de objetos, que se adapte mejor al caso de uso.
  
  []
 
 ========
 
+** No funciona la búsqueda by example (2)
+
+ Si la búsqueda by example no trae ciertos objetos mientras que el allInstances sí,
+ fijate si no estás pasando un example con tipos primitivos o con atributos anotados
+ con @PersistentField inicializados.
+ 
+ Ejemplo: tenés un objeto Cliente con un atributo boolean, o bien es un Boolean como
+ corresponde pero está inicializado:
+ 
+----------------------------------
+Boolean generaFacturacionMensual = false
+----------------------------------
+
+ Esto produce que en todas las búsquedas by example se filtre a los clientes que 
+ <<no>> generan facturación mensual.
+ 
+ Este consejo no es válido para las colecciones (@Relation), ya que no inicializarlas
+ puede producir un funcionamiento erróneo, como se ve más abajo en esta misma página.
+ 
+ 
+========
+
 ** El método allInstances no devuelve elementos aunque sí los persiste
  
- Chequeá el stack trace por errores al definir el home, algo como: 
+ Chequeá el stack trace por errores al definir el repo, algo como: 
 
 ----------------------------------
 ClassNotFoundException(Throwable).<init>(String, Throwable) line: 286 
@@ -96,7 +118,7 @@ Launcher$ExtClassLoader(URLClassLoader).findClass(String) line: not available
 Launcher$ExtClassLoader(ClassLoader).loadClass(String, boolean) line: not available 
 Launcher$AppClassLoader(ClassLoader).loadClass(String, boolean) line: not available 
 ----------------------------------
- En ese caso quizás hayas querido definir un método abstracto T getEntityType() en un Home abstracto (ver {{{./documentation/homes.html}Homes}}):
+ En ese caso quizás hayas querido definir un método abstracto T getEntityType() en un Repo abstracto (ver {{{./documentation/homes.html}Homes}}):
 
 +--
 @Override
@@ -105,7 +127,7 @@ public Class<T> getEntityType() {
 }
 +--
 
- La explicación teórica de por qué falla T.class es debido a que la información de tipo genérico se borra durante la ejecución. Por este motivo en tiempo de ejecución no tiene ni idea cómo resolverlo. Por eso la gente que desarrolló Arena persistence en la interfaz de Home pide que implementemos un método getEntityType concreto (ejemplo: Cliente.class).
+ La explicación teórica de por qué falla T.class es debido a que la información de tipo genérico se borra durante la ejecución. Por este motivo en tiempo de ejecución no tiene ni idea cómo resolverlo. Por eso la gente que desarrolló Arena persistence en la interfaz de Repo pide que implementemos un método getEntityType concreto (ejemplo: Cliente.class).
 
 ==============================
 
@@ -186,7 +208,7 @@ Excepción: org.eclipse.core.runtime.AssertionFailedException: assertion failed:
  
 ** No se actualizan los datos de ciertas entidades
  
-  * Hay que enviar un mensaje update() o save() al home para que se persista la información
+  * Hay que enviar un mensaje update() o save() al repo para que se persista la información
  
   * Si estamos grabando una entrada y la entrada tiene los datos del cliente hay que verificar que el getCliente() esté anotado con una @Relation 
   y que la entidad Cliente esté anotada como @PersistentClass, de lo contrario no se actualizará esa información.

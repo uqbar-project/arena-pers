@@ -22,7 +22,7 @@
 			<item name="Introducción" href="index.html"/>
 			<item name="Uso" href="usage.html"/>
 			<item name="Documentación" href="documentation.html">
-				<item name="Homes" href="documentation/homes.html"/>
+				<item name="Repos" href="documentation/homes.html"/>
 				<item name="Objetos de dominio" href="documentation/domain.html"/>
 				<item name="Inicialización de la app" href="documentation/initialization.html"/>
 				<item name="Ejemplos" href="https://svn2.xp-dev.com/svn/uqbar/examples/dds/datos/arena-persistence/"/>

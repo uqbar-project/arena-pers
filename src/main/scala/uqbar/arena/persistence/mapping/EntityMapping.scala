@@ -62,10 +62,17 @@ class EntityMapping[T <: Entity](clazz: Class[T]) {
     val graphDB = session.graphDB
     val queryBuilder = new QueryBuilder()
 
+    //FED - TODO: Configurar modo DEBUG para que loguee
+    //println("Search by example")
+    //println("+ objeto: " + entity)
+    //println("+ mapeos: ")
     for (m <- mappings) {
+      //println("     " + m)
       m.query(queryBuilder, entity)
     }
     val queryString = queryBuilder.query
+    //println("Query String: " + queryString)
+    //println("*******************************")
 
     val nodes = {
       if (!queryString.isEmpty())

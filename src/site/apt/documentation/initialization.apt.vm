@@ -26,6 +26,8 @@ class CelularApplication extends Application {
 	
 	static def void main(String[] args) { 
 		new CelularApplication().start()
+		// también podés pasarle un objeto Bootstrap a tu Application
+		// new CelularApplication(new CelularesBootstrap()).start()
 	}
 
 	override createMainWindow() {
