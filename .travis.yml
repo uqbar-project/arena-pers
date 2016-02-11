@@ -1,4 +1,8 @@
 language: java
+
+jdk:
+  - oraclejdk8
+
 before_install:
 - openssl aes-256-cbc -K $encrypted_65ac47c0a6cd_key -iv $encrypted_65ac47c0a6cd_iv
   -in maven_files.tar.enc -out maven_files.tar -d
