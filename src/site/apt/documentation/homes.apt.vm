@@ -19,13 +19,13 @@ Repos
  []
    
 
- Los repos de tu aplicación deben extender de PersistentRepo<T> donde T es 
+ Los repos de tu aplicación deben extender de <PersistentRepo<T>> donde T es 
  
  el tipo de objeto que estás guardando en el repositorio.
 
  []
 
- También tenés que definirle los métodos Class<T> getEntityType() y T createExample() en las subclases concretas 
+ También tenés que definirle los métodos <Class<T> getEntityType()> y <T createExample()> en las subclases concretas 
  (ojo que si vas a definir una clase abstracta AbstractMiAplicacionRepo que unifique comportamiento 
  igualmente debés dejar que las subclases de ese Repo redefinan ambos métodos ya que no conocés la
  clase concreta de T).
@@ -90,7 +90,7 @@ Ejemplo
 
 * Xtend
 
- A continuación mostramos cómo sería un objeto repo o repositorio de clientes de una compañía de celulares:
+ A continuación mostramos cómo sería un objeto repositorio de clientes de una compañía de celulares:
  
 +--
 class RepoCelulares extends PersistentRepo<Celular> {
@@ -224,5 +224,83 @@ class RepoCelulares extends PersistentRepo<Celular> {
  Veamos un ejemplo similar utilizando Java como lenguaje de programación:
  
 +--
-// TODO
+@Observable
+public class RepositorioCelulares extends PersistentRepo<Celular> implements Serializable {
+	private static RepositorioCelulares instance;
+
+	/**
+	 * Definición del Singleton
+	 */
+	public static synchronized RepositorioCelulares getInstance() {
+		if (instance == null) {
+			instance = new RepositorioCelulares();
+		}
+		return instance;
+	}
+
+	private RepositorioCelulares() {
+	}
+
+	public void create(Celular celular) {
+		this.validarClientesDuplicados(celular);
+		celular.validar();
+		super.create(celular);
+	}
+
+	public void createIfNotExists(String pNombre, Integer pNumero, ModeloCelular pModeloCelular,Boolean pRecibeResumenCuenta) {
+		Celular celular = new Celular(pNombre, pNumero, pModeloCelular, pRecibeResumenCuenta);
+		this.createIfNotExists(celular);
+	}
+	
+	public Celular createIfNotExists(Celular celular) {
+		Celular celularDB = this.get(celular.getNumero());
+		if (celularDB == null) {
+			this.create(celular);
+			celularDB = celular;
+		}
+		return celularDB;
+	}
+
+	/**
+	 * Devuelve un celular en base al número (que no puede repetirse)
+	 */
+	public Celular get(Integer unNumero) {
+		List<Celular> celulares = this.search(unNumero);
+		if (celulares.isEmpty()) {
+			return null;
+		} else {
+			return celulares.get(0);
+		}
+	}
+
+	protected void validarClientesDuplicados(Celular celular) {
+		if (!this.search(celular.getNumero()).isEmpty()) {
+			throw new UserException("Ya existe un celular con el número: " + celular.getNumero());
+		}
+	}
+
+	// ********************************************************
+	// ** Búsquedas
+	// ********************************************************
+
+	public List<Celular> search(Integer numero) {
+		return this.search(numero, null);
+	}
+
+	public List<Celular> search(Integer numero, String nombre) {
+		Celular example = new Celular(nombre, numero);
+		return this.searchByExample(example);
+	}
+
+	@Override
+	public Class<Celular> getEntityType() {
+		return Celular.class;
+	}
+
+	@Override
+	public Celular createExample() {
+		return new Celular();
+	}
+}
+
 +--     

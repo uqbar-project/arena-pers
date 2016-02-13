@@ -18,7 +18,11 @@ Configuration.configure()
  <<¡OJO!>> que hay varias clases que se llaman Configuration, pero están en distintos paquetes.
 
  Lo que hace este método estático es configurar la base de datos embebida y recorrer tus clases para 
- leer las annotations. En una aplicación con Arena-UI el lugar donde configurar es cuando 
+ leer las annotations. 
+ 
+* Ejemplo con Arena UI
+
+ En una aplicación con Arena-UI el lugar donde configurar es cuando 
  levanta la aplicación:
  
 +--
@@ -39,6 +43,10 @@ class CelularApplication extends Application {
 	
 }
 +--
+ 
+ A su vez la clase CelularesBootstrap permite definir un juego de datos default, en lugar de
+ acoplarlo a nuestro repositorio persistente. Para más información recomendamos leer
+ la {{{http://algo3.uqbar-project.org/material/herramientas/arena}documentación oficial de Arena UI}}.
  
 * ¿Dónde se guarda la información?
 

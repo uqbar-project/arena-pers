@@ -45,7 +45,7 @@ at uqbar.arena.persistence.reflection.TypeWrapper.newInstance(TypeWrapper.scala:
 ...
 ----------------------------------
 
- Es debido a no tener inicializadas las colecciones de nuestro dominio. Cuando Arena levanta el grafo persistido y comienza a instanciar los objetos de dominio mediante su constructor vacío, en este objeto nuevo no se encuentran asignadas las colecciones. Por ejemplo para una definición como esta:
+ Es debido a no tener inicializadas las colecciones de nuestro dominio. Cuando Arena levanta el grafo persistido y comienza a instanciar los objetos de dominio mediante su constructor vacío, en este objeto nuevo no se encuentran asignadas las colecciones. Por ejemplo para una definición como ésta:
  
 +--
 List<Receta> recetasFavoritas;
@@ -97,7 +97,7 @@ Boolean generaFacturacionMensual = false
  <<no>> generan facturación mensual.
  
  Este consejo no es válido para las colecciones (@Relation), ya que no inicializarlas
- puede producir un funcionamiento erróneo, como se ve más abajo en esta misma página.
+ puede producir un funcionamiento erróneo, como aclaramos más arriba en esta misma página.
  
  
 ========

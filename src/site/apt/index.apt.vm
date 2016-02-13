@@ -6,7 +6,7 @@
 
 Introducción
 
- <<Arena Persistence es un framework de persistencia sencillo>> que tiene fines didácticos, 
+ <<Arena Persistence es un framework de persistencia simple>> que tiene fines didácticos y 
  trabaja con un esquema persistente de grafos en {{{http://neo4j.com/}Neo4J}}. 
  
  El contrato que trae Arena Persistence es muy sencillo, basta con
@@ -19,7 +19,7 @@ Introducción
 
 []
  
- Arena es utilizado como alternativa en algunos cursos para persistir los trabajos prácticos 
+ Arena es utilizado como alternativa en algunos cursos para los trabajos prácticos 
  de Diseño de Sistemas desde el año 2012 en la {{{http://frba.utn.edu.ar/}Universidad Tecnológica Nacional}}. 
  A partir del 2016 se suma como opción de persistencia no-relacional en la materia Programación
  con Herramientas Modernas de la {{{http://www.unsam.edu.ar/}Universidad Nacional de San Martín}}.
@@ -30,7 +30,7 @@ Cómo lo uso
  
 Documentación
 
- Y la página {{{./documentation.html}Documentación}} te va a enseñar los conceptos principales a partir de ejemplos
+ La página {{{./documentation.html}Documentación}} te va a enseñar los conceptos principales a partir de ejemplos
  concretos.
   
 Desarrollo
